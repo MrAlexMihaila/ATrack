@@ -1,0 +1,22 @@
+<!-- taken from lab 7 -->
+{{> message}}
+<div class="container mt-5" style="max-width: 500px; margin-left: auto; margin-right: auto;">
+    <h1 class="text-center mb-4">Login</h1>
+    {{> message message=message}}
+    <form action="/login" method="POST" autocomplete="off">
+        <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" name="username" id="username" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" required>
+        </div> 
+
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" name="password" id="password" required>
+        </div>
+
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-outline-purple w-100 rounded-pill fw-bold">Login</button>
+        </div>
+    </form>
+    <p class="text-center mt-3">Don't have an account? <a href="/register">Register</a></p>
+</div>

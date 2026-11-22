@@ -1,0 +1,27 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Find Friends</h2>
+    <form class="d-flex" method="GET" action="/friends">
+      <input
+        type="text"
+        class="form-control me-2"
+        name="search"
+        placeholder="Search by username"
+        value="{{search}}"
+        aria-label="Search friends"
+      />
+      <button class="btn btn-purple" type="submit">Search</button>
+    </form>
+  </div>
+
+  {{#if users}}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-5 g-4">
+      {{#each users}}
+        <!-- Pass the user info and search term to the friend_card partial -->
+        {{> friend_card search=../search}}
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="alert alert-info">No users found with that search term.</div>
+  {{/if}}
+</div>

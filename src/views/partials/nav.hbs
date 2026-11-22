@@ -1,0 +1,109 @@
+<header>
+  <div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: 280px; height: 100vh; position: fixed; top: 0; left: 0;">
+    <a href="/" class="d-flex justify-content-center w-100 text-decoration-none link-dark align-items-center gap-2">
+      <img src="/resources/img/atrack-logo.svg" alt="ATrack logo" style="width: 140px; height: auto; object-fit: contain;">
+    </a>
+    <hr>
+
+<form class="navbar-form navbar-left mb-3" action="/search" method="GET">
+  <div class="input-group">
+
+    <!-- DROPDOWN -->
+    <select name="type" class="form-select px-2 search-dropdown" style="max-width: 90px;">
+      <option value="track">Tracks</option>
+      <option value="artist">Artists</option>
+      <option value="album">Albums</option>
+      <option value="users">Users</option>
+    </select>
+
+    <!-- SEARCH ICON -->
+    <span class="input-group-text search-icon border-start-0 border-end-0">
+      <i class="bi bi-search"></i>
+    </span>
+
+    <!-- MAIN INPUT -->
+    <input 
+      type="text" 
+      class="form-control" 
+      name="song" 
+      placeholder="Search..." 
+      required
+    >
+
+  </div>
+</form>
+
+<!-- NAV LINKS -->
+<ul class="nav nav-pills flex-column mb-auto">
+  <li class="nav-item">
+    <a href="/albums" class="nav-link link-dark {{#if isAlbums}}active{{/if}}">
+      <i class="bi bi-vinyl-fill"></i>
+      Albums
+    </a>
+  </li>
+  <li>
+    <a href="/songs" class="nav-link link-dark {{#if isSongs}}active{{/if}}">
+      <i class="bi bi-music-note-beamed"></i>
+      Songs
+    </a>
+  </li>
+  <li>
+    <a href="/genres" class="nav-link link-dark {{#if isGenres}}active{{/if}}">
+      <i class="bi bi-music-note-list"></i>
+      Genres
+    </a>
+  </li>
+  <li>
+    <a href="/friends" class="nav-link link-dark {{#if isFriends}}active{{/if}}">
+      <i class="bi bi-people-fill"></i>
+      Friends
+    </a>
+  </li>
+</ul>
+<div class="d-flex w-100 justify-content-center mb-3">
+  <button id="darkModeToggle" class="btn btn-dark dark-mode-btn p-0 d-flex align-items-center justify-content-center">
+    <i class="bi bi-moon-fill"></i>
+  </button>
+</div>
+      {{#if user}}
+        <div class="profile-card" style="position: relative;">
+          <div id="profileMenu" style="display: none; position: absolute; bottom: 100%; left: 0; right: 0; z-index: 1000; margin-bottom: 8px;" class="profile-menu-dropdown">
+            {{#if userLoggedIntoSpotify}}
+              <a class="dropdown-item" roll="button">
+                <i class="bi bi-spotify"></i>Connected With Spotify
+              </a>
+            {{else}}
+              <a class="dropdown-item" href="/spotify-login" roll="button">
+                <i class="bi bi-spotify"></i>Connect With Spotify
+              </a>
+            {{/if}}
+            
+            <a href="/profile" class="dropdown-item d-flex align-items-center">
+              <i class="bi bi-person me-2" style="font-size: 18px;"></i> Profile
+            </a>
+            <a href="/logout" class="dropdown-item d-flex align-items-center dropdown-item-logout">
+              <i class="bi bi-box-arrow-right me-2" style="font-size: 18px;"></i> Logout
+            </a>
+          </div>
+          
+          <button 
+            class="btn d-flex align-items-center gap-2 p-2" 
+            style="background: none; border: none; cursor: pointer; width: 100%; justify-content: flex-start;"
+            onclick="toggleProfileMenu()"
+          >
+            <img 
+              src="{{#if user.user_image_url}}{{user.user_image_url}}{{else}}/resources/img/default-profile.png{{/if}}"
+              alt="Profile" 
+              class="profile-pic" 
+              style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; flex-shrink: 0;"
+            >
+            <span class="text-dark" style="word-break: break-word; font-weight: 600; font-size: 18px; text-align: left; margin-left: 8px;">{{user.username}}</span>
+          </button>
+        </div>
+      {{else}}
+        <div class="d-grid gap-2">
+          <a class="btn btn-outline-purple w-100 rounded-pill fw-bold" href="/login" role="button">Log In</a>
+          <a class="btn btn-purple w-100 rounded-pill " href="/register" role="button">Sign Up Free</a>
+        </div>
+      {{/if}}
+    </header>

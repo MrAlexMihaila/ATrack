@@ -1,0 +1,54 @@
+<div class="position-fixed top-0 genre-header-bar" style="left: 280px; width: calc(100% - 280px); z-index: 1020; padding: 1rem;">
+  <div class="d-flex justify-content-between align-items-center">
+    <h2>Explore Genres</h2>
+    <form class="d-flex genre-search-form" method="GET" action="/genres">
+      <input
+        type="text"
+        class="form-control me-2"
+        name="search"
+        placeholder="Search by genre"
+        value="{{search}}"
+        aria-label="Search genres"
+      />
+      <button class="btn btn-outline-primary" type="submit">Search</button>
+    </form>
+  </div>
+</div>
+
+<div style="padding-top: 100px;"> <!-- Add padding to account for fixed header -->
+  {{#if search}}
+    {{#if artists}}
+      <div class="mb-4">
+        <h3 class="mb-2" style="margin-left: 10px;">Top Artists in {{search}}</h3>
+        <div class="row-scroll row-1">
+          {{#each artists}}
+            <div class="col-2-4">
+              {{> artist_card}}
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{#if songs}}
+      <div class="mb-4">
+        <h3 class="mb-2" style="margin-left: 10px;">Top Songs in {{search}}</h3>
+        <div class="row-scroll row-1">
+          {{#each songs}}
+            <div class="col-2-4">
+              {{> song_card}}
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{#unless artists}}
+      {{#unless songs}}
+        <div class="alert alert-info">No artists or songs found for the genre "{{search}}".</div>
+      {{/unless}}
+    {{/unless}}
+  {{else}}
+    <div class="alert alert-info">Search for a genre to discover artists and songs.</div>
+  {{/if}}
+</div>

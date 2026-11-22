@@ -1,0 +1,245 @@
+<div class="container-fluid" id="song-page" data-song-uri="{{songURI}}" data-song-id="{{songID}}">
+  <div class="row">
+    <div class="col-md-3 bg-light vh-100 p-4 ms-5">
+        {{#if albumImages.[0].url}}
+            <a href="/albums_tab/{{albumId}}">
+                <img src="{{albumImages.[0].url}}" class="img-fluid mb-3" alt="Album Art" />
+            </a>
+        {{/if}}
+        <h4>{{name}}</h4>
+        <p class="text-muted">
+            {{#each artists}}
+            {{this.name}}{{#unless @last}}, {{/unless}}
+            {{/each}}
+        </p>
+        <p class="text-muted">
+            <i class="bi bi-clock"></i> {{time}}
+        </p>
+        <p>
+            <strong>Community Rating:</strong>
+            {{#if songRating}}
+                {{songRating}}
+            {{else}}
+                No ratings yet
+            {{/if}}
+        </p>
+        
+        {{#if login}}
+            {{#if userReview}}
+                <button class="btn btn-outline-purple w-100 rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#add_review_modal">
+                    Edit Review
+                </button>
+            {{else}}
+                <button class="btn btn-outline-purple w-100 rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#add_review_modal">
+                    Add Review
+                </button>
+            {{/if}}
+            
+        {{else}}
+            <button class="btn btn-outline-purple w-100 rounded-pill fw-bold" data-bs-toggle="modal">
+                Please login to add a review!
+            </button>
+        {{/if}}
+    </div>
+    <div class="col-md-7 p-4">
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Community Reviews</h5>
+                {{#if reviews.length}}
+                    {{#each reviews}}
+                        <div class="border p-2 mb-2 song-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{username}}</strong>
+                                    <span class="ms-2">({{gradeFromRating rating}})</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-outline-success like-btn" data-review-id="{{review_id}}">
+                                        👍 {{likes}}
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger dislike-btn" data-review-id="{{review_id}}">
+                                        👎 {{dislikes}}
+                                    </button>
+                                </div>
+                            </div>
+                            <p class="mt-2 mb-0">{{review_text}}</p>
+                        </div>
+                    {{/each}}
+                {{else}}
+                    <p>No reviews yet.</p>
+                {{/if}}
+            </div>
+
+            <div class="col-md-6">
+                <h5>Player</h5>
+
+                <div id="player-ui" class="player-container border rounded-4 p-4 mb-4 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h6 class="text-uppercase tracking-wider small mb-0 fw-bold text-muted">Now Playing</h6>
+                        {{#if spotifyPremium}}
+                            <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-3">
+                                <i class="bi bi-patch-check-fill me-1"></i> Premium
+                            </span>
+                        {{else}}
+                            <span class="badge rounded-pill bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3">
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i> Free Tier
+                            </span>
+                        {{/if}}
+                    </div>
+
+                    <div class="controls-wrapper text-center">
+                        <div class="d-flex align-items-center justify-content-center gap-4 mb-3">
+                            <button id="play-toggle" class="btn btn-purple btn-lg rounded-circle shadow play-btn">
+                                <i class="bi bi-play-fill"></i>
+                            </button>
+                        </div>
+
+                        <div class="progress-container px-2">
+                            <input type="range" id="seek-bar" min="0" max="100" value="0" class="custom-range">
+                            <div class="d-flex justify-content-between mt-2 text-muted extra-small fw-medium">
+                                <span id="time-display">0:00</span>
+                                <span>{{time}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top">
+                        {{#if login}}
+                            {{#if spotifyPremium}}
+                                <button class="btn btn-outline-purple w-100 rounded-pill fw-bold" data-bs-toggle="modal" id="timestampCommentID" data-bs-target="#add_timestamp_modal">
+                                    <i class="bi bi-chat-left-dots-fill me-2"></i> 
+                                    {{#if userTimestampComment}}
+                                        Edit Timestamp Comment
+                                    {{else}}
+                                        Add Timestamp Comment
+                                    {{/if}}
+                                </button>
+                            {{else}}
+                                <div class="alert alert-light border text-center small mb-0 rounded-3">
+                                    Upgrade to Premium or Log into Spotify for interactive playback.
+                                </div>
+                            {{/if}}
+                        {{else}}
+                            <button class="btn btn-secondary w-100 rounded-pill opacity-75" disabled>Login to Interact</button>
+                        {{/if}}
+                    </div>
+                </div>
+                <h5>Timestamp Comments</h5>
+                {{#if timestampComments.length}}
+                    {{#each timestampComments}}
+                        <div class="border p-2 mb-2 song-card">
+                            <strong>{{username}}</strong>
+                            <span class="ms-2">
+                                <a href="#" class="timestamp-link" data-seconds="{{timestamp_seconds}}">
+                                    ({{formattedTime}})
+                                </a>
+                            </span>
+                            <p class="mb-0">{{comment_text}}</p>
+                        </div>
+                    {{/each}}
+                {{else}}
+                    <p>No comments yet.</p>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- form to add a review, THIS IS NOT A SONG TIMESTAMP COMMENT -->
+<!-- most of the structure was taken from lab 4 -->
+<div class="modal" tabindex="-1" id="add_review_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+        <!-- Header -->
+        <div class="modal-header">
+            <h5 class="modal-title">
+                {{#if userReview}}
+                    Edit Rating
+                {{else}}
+                    Add Rating
+                {{/if}}
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <!-- Body -->
+        <div class="modal-body">
+            <form id="event_form" onsubmit="handleSubmit(); return false;">
+                <div class="mb-3">
+                    <label for="review_rating" class="form-label">Rating</label>
+                    <select class="form-select" id="review_rating">
+                        <option value="rating_a" {{#if (eq userReview.rating 5)}}selected{{/if}}>A</option>
+                        <option value="rating_b" {{#if (eq userReview.rating 4)}}selected{{/if}}>B</option>
+                        <option value="rating_c" {{#if (eq userReview.rating 3)}}selected{{/if}}>C</option>
+                        <option value="rating_d" {{#if (eq userReview.rating 2)}}selected{{/if}}>D</option>
+                        <option value="rating_e" {{#if (eq userReview.rating 1)}}selected{{/if}}>E</option>
+                        <option value="rating_f" {{#if (eq userReview.rating 0)}}selected{{/if}}>F</option>
+                    </select>
+                </div>
+
+                <!-- review description -->
+                <div class="mb-3">
+                    <label for="review_description" class="form-label">Review Description</label>
+                    <input type="text" class="form-control" id="review_description"
+                    value="{{#if userReview}}{{userReview.review_text}}{{/if}}"
+                    placeholder="Write your review here, if you want!">
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                            data-bs-dismiss="modal">Close</button>
+
+                    <button class="btn btn-purple" type="submit">
+                        Save Review
+                    </button>
+                </div>
+
+            </form>
+        </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal to add a timestamp -->
+<div class="modal" tabindex="-1" id="add_timestamp_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    {{#if userReview}}
+                        Edit Timestamp Comment
+                    {{else}}
+                        Add Timestamp Comment
+                    {{/if}}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="return addTimestampComment();">
+                    <div class="mb-3">
+                        <label class="form-label">Timestamp</label>
+                        <input type="text" id="timestamp_display" class="form-control" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Comment</label>
+                        <input type="text" id="timestamp_comment" class="form-control" 
+                               value="{{#if userTimestampComment}}{{userTimestampComment.comment_text}}{{/if}}"
+                               placeholder="What's happening at this time?">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-purple" type="submit">Save Comment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    //just for token for web playback
+    const SPOTIFY_TOKEN = "{{spotifyToken}}";
+</script>
